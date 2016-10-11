@@ -797,25 +797,45 @@ iapp_configuration() {
                                         done
 
                                         service+=" } "
-					if [[ -n $(get_application_service ${deployment}_${uniquerun}) ]]; then
-						# command="modify sys application service ${deployment}.app/${deployment} execute-action definition $service"
-                              log "iApp Deployment Already Exists - Last Message $iapp_status"
-                              set_status "Failure: iApp Deployment Already Exists - Last Message $iapp_status"
-                              exit
-					else
-						command="create sys application service ${deployment}_${uniquerun} template $iapp_template $service"
-					fi
-					tmsh -c "$command"
+                         if [[ -n $(get_application_service ${deployment}) ]]; then
+                              # set the app status to 0, so the iApp will not download a new ASM policy
+                              appstatus_data_group_cmd="tmsh modify ltm data-group internal /Common/appstatus_datagroup records modify { status { data 0 } }"
+                              eval "$appstatus_data_group_cmd 2>&1 | $LOGGER_CMD"
+                              
+                              # deployment already exists, update the application service but don't touch the time stamp data group
+                              command="modify sys application service ${deployment}.app/${deployment} execute-action definition $service"
+                              log "Application Service Already Exists; Updating Deployment - Last Message $iapp_status"
+                              set_status "Application Service Already Exists; Updating Deployment - Last Message $iapp_status"
+else
+                              # new deployment, add it to the time stamp data group
+                              add_appsvc_data_group_cmd="tmsh modify ltm data-group internal /Common/appsvc_datagroup records add { $deployment { data $(date +%s) }  }"
+                              eval "$add_appsvc_data_group_cmd 2>&1 | $LOGGER_CMD"
+                              tmsh save sys config | eval $LOGGER_CMD
+                              
+                              # create the application service
+                              command="create sys application service ${deployment} template $iapp_template $service"
+                         fi
+                         
+                         # run the iApp command
+                         tmsh -c "$command" > $OS_USER_DATA_STATUS_PATH 2>&1
                          iapp_status=$(cat $OS_USER_DATA_STATUS_PATH)
-                         if [[ -z $(get_application_service ${deployment}_${uniquerun}) ]]; then
-                              log "iApp Deployment Failed - Last Message $iapp_status"
-                              set_status "Failure: iApp Deployment Failed - Last Message $iapp_status"
+                         # check that the application service we just deployed is present; if not, report failure
+                         if [[ -z $(get_application_service ${deployment}) ]]; then
+                              # remove failed deployment from data group
+                              delete_appsvc_data_group_cmd="tmsh modify ltm data-group internal /Common/appsvc_datagroup records delete { $deployment }"
+                              eval "$delete_appsvc_data_group_cmd 2>&1 | $LOGGER_CMD"
+                              tmsh save sys config | eval $LOGGER_CMD
+                              
+                              log "Application Service Deployment Failed - Last Message $iapp_status"
+                              set_status "Failure: Application Service Deployment Failed - Last Message $iapp_status"
                               exit
+else
+                              log "Application Service Deployment Succeeded - Last Message $iapp_status"
                          fi 					
-                                fi
-                        done
-                  fi
-          done
+                    fi
+               done
+          fi
+     done
 }
 
 function main() {
