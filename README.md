@@ -1,0 +1,1 @@
+# azureO365_single
