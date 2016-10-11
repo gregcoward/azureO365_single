@@ -70,7 +70,7 @@
     "availabilitySetName": "[concat(parameters('dnsNameForPublicIP'),'-avset')]",
     "newStorageAccountName": "[concat(parameters('dnsNameForPublicIP'),'stor')]",
     "bigipNamePrefix": "[concat(parameters('dnsNameForPublicIP'),'-bigip')]",
-    "baseUrl": "https://raw.githubusercontent.com/gregcoward/azureO365/master/",
+    "baseUrl": "https://raw.githubusercontent.com/gregcoward/azureO365_single/master/",
     "iappTemplate": "f5.microsoft_office_365_idp.v1.1.0.tmpl",
     "iappUrl": "[concat(variables('baseUrl'),variables('iappTemplate'))]",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
