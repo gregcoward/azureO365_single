@@ -17,7 +17,7 @@
     ],
     "steps": [
       {
-        "name": "f5BigipSettings",
+        "name": "bigipSettings",
         "label": "F5 BIG-IP Settings",
         "subLabel": {
           "preValidation": "Configure Settings for the F5 BIG-IP",
@@ -56,7 +56,7 @@
             "osPlatform": "Linux"
           },
           {
-            "name": "VmSize",
+            "name": "vmSize",
             "type": "Microsoft.Compute.SizeSelector",
             "label": "Virtual machine size",
             "toolTip": "Select the desired instance size for virtual machine to provision.",
@@ -95,7 +95,7 @@
         ]
       },
       {
-        "name": "Federation Settings",
+        "name": "federationSettings",
         "label": "F5 Federation Settings",
         "subLabel": {
           "preValidation": "Configure o365 federation settings",
@@ -134,7 +134,7 @@
             }
           },
           {
-            "name": "dnsEndpointFqdn",
+            "name": "dnsFqdn",
             "type": "Microsoft.Common.TextBox",
             "label": "Authentication Domain Controller IP Address",
             "defaultValue": "required",
@@ -165,48 +165,16 @@
       }
     ],
     "outputs": {
-      "location": "[location()]",
       "dnsNameForPublicIP": "[basics('dnsNameForPublicIP')]",
-      "adminUsername": "[steps('f5BigipSettings').adminUsername]",
-      "adminPassword": "[steps('f5BigipSettings').SSHCredentials.password]",
-      "vmSize": "[steps('f5BigipSettings').VmSize]",
-      "licenseToken": "[steps('f5BigipSettings').licenseToken]",
-      "authFqdn": {
-        "type": "string",
-        "metadata": {
-          "description": "Specify your Active Directory domain controller FQDN."
-        }
-      },
-      "authIp": {
-        "type": "string",
-        "metadata": {
-          "description": "Specify your Active Directory domain controller IP."
-        }
-      },
-      "domainFqdn": {
-        "type": "string",
-        "metadata": {
-          "description": "Specify the FQDN of the Active Directory deployment for your Office 365 users. This is the FQDN for your domain, such as example.com, rather than the FQDN for any specific host."
-        }
-      },
-      "dnsEndpointFqdn": {
-        "type": "string",
-        "metadata": {
-          "description": "The public federation endpoint FQDN"
-        }
-      },
-      "sslCert": {
-        "type": "string",
-        "metadata": {
-          "description": "The SSL certificate .pfx file corresponding to public facing VIP."
-        }
-      },
-      "encryptCert": {
-        "type": "string",
-        "metadata": {
-          "description": "The SSL certificate .pfx file for packet encryption."
-        }
-      }
+      "adminUsername": "[steps('bigipSettings').adminUsername]",
+      "adminPassword": "[steps('bigipSettings').SSHCredentials.password]",
+      "vmSize": "[steps('bigipSettings').vmSize]",
+      "licenseToken": "[steps('bigipSettings').licenseToken]",
+      "authFqdn": "[steps('federationSettings').authFqdn]",
+      "authIp": "[steps('federationSettings').authIp]",
+      "domainFqdn": "[steps('federationSettings').domainFqdn]",
+      "dnsEndpointFqdn": "[steps('federationSettings').dnsFqdn]",
+      "sslCert": "[steps('federationSettings').sslCert]"
     }
   }
 }
