@@ -2,16 +2,36 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "dnsNameForPublicIP": {
+      "type": "string",
+      "metadata": {
+        "description": "The public prefix for the BIG-IP."
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "azureuser",
+      "metadata": {
+      "description": "The BIG-IP administrator username."
+      }
+    },
+    "adminPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "The BIG-IP administrator password."
+      }
+    },
     "licenseToken": {
       "type": "string",
       "metadata": {
         "description": "The License Token for the first BYOL F5 Web Application Firewall."
       }
     },
-    "dnsNameForPublicIP": {
+    "vmSize": {
       "type": "string",
+      "defaultValue": "Standard_A3",
       "metadata": {
-        "description": "The public prefix for the BIG-IP."
+        "description": "The size of the Virtual Hardware Instance."
       }
     },
     "authFqdn": {
@@ -43,21 +63,12 @@
       "metadata": {
         "description": "The SSL certificate .pfx file corresponding to public facing VIP."
       }
-    },
-    "encryptCert": {
-      "type": "string",
-      "metadata": {
-        "description": "The SSL certificate .pfx file for packet encryption."
-      }
     }
   },
   "variables": {
     "entityId": "[concat('https://',trim(parameters('dnsEndpointFqdn')),'/idp/f5/')]",
     "numberOfBIGIPs": 1,
     "location": "[resourceGroup().location]",
-    "vmSize": "Standard_F4",
-    "adminUsername": "azureuser",
-    "adminPassword": "F5demonet",
     "virtualNetworkName": "[concat(parameters('dnsNameForPublicIP'),'-vnet')]",
     "loadBalancerName": "[concat(parameters('dnsNameForPublicIP'),'-alb')]",
     "vnetAddressPrefix": "10.10.0.0/16",
@@ -329,12 +340,12 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName'))]"
         },
         "hardwareProfile": {
-          "vmSize": "[variables('vmSize')]"
+          "vmSize": "[parameters('vmSize')]"
         },
         "osProfile": {
           "computerName": "[concat(variables('bigipNamePrefix'),copyindex())]",
-          "adminUsername": "[variables('adminUsername')]",
-          "adminPassword": "[variables('adminPassword')]"
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
@@ -384,7 +395,7 @@
             "[concat(variables('baseURL'),'azureo365.sh')]",
             "[concat(variables('baseURL'),'o365start.sh')]"
           ],
-          "commandToExecute": "[concat('bash o365start.sh ','true',';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',';',variables('adminPassword'),';',parameters('licenseToken'),';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',' 6443 ',variables('entityId'),';',parameters('authFqdn'),';',parameters('authIp'),';',parameters('domainfqdn'),';',parameters('sslCert'),';',parameters('encryptCert'),';',parameters('dnsEndpointFqdn'),';',variables('iappUrl'))]"
+          "commandToExecute": "[concat('bash o365start.sh ','true',';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',';',parameters('adminPassword'),';',parameters('licenseToken'),';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',' 6443 ',variables('entityId'),';',parameters('authFqdn'),';',parameters('authIp'),';',parameters('domainfqdn'),';',parameters('sslCert'),';',parameters('encryptCert'),';',parameters('dnsEndpointFqdn'),';',variables('iappUrl'))]"
         }
       }
     }
