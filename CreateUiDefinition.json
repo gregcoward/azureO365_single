@@ -79,8 +79,7 @@
               "publisher": "f5-networks",
               "offer": "f5-big-ip",
               "sku": "f5-bigip-virtual-edition-best-byol"
-            },
-            "count": "[steps('infrastructureConfig').numberOFWAFs]"
+            }
           },
           {
             "name": "licenseToken",
@@ -114,7 +113,7 @@
             }
           },
           {
-            "name": "authIP",
+            "name": "authIp",
             "type": "Microsoft.Common.TextBox",
             "label": "Authentication Domain Controller IP Address",
             "defaultValue": "1,2,3,4",
