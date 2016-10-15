@@ -21,17 +21,17 @@
         "description": "The BIG-IP administrator password."
       }
     },
-    "licenseToken": {
-      "type": "string",
-      "metadata": {
-        "description": "The License Token for the first BYOL F5 Web Application Firewall."
-      }
-    },
     "vmSize": {
       "type": "string",
       "defaultValue": "Standard_A3",
       "metadata": {
         "description": "The size of the Virtual Hardware Instance."
+      }
+    },
+    "licenseToken": {
+      "type": "string",
+      "metadata": {
+        "description": "The License Token for the first BYOL F5 Web Application Firewall."
       }
     },
     "authFqdn": {
