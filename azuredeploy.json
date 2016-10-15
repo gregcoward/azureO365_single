@@ -52,7 +52,7 @@
         "description": "Specify the FQDN of the Active Directory deployment for your Office 365 users. This is the FQDN for your domain, such as example.com, rather than the FQDN for any specific host."
       }
     },
-    "dnsEndpointFqdn": {
+    "dnsFqdn": {
       "type": "string",
       "metadata": {
         "description": "The public federation endpoint FQDN"
@@ -66,7 +66,7 @@
     }
   },
   "variables": {
-    "entityId": "[concat('https://',trim(parameters('dnsEndpointFqdn')),'/idp/f5/')]",
+    "entityId": "[concat('https://',trim(parameters('dnsFqdn')),'/idp/f5/')]",
     "numberOfBIGIPs": 1,
     "location": "[resourceGroup().location]",
     "virtualNetworkName": "[concat(parameters('dnsNameForPublicIP'),'-vnet')]",
@@ -79,7 +79,7 @@
     "ipAddress": "10.10.1.1",
     "nicNamePrefix": "[concat(parameters('dnsNameForPublicIP'),'-nic')]",
     "availabilitySetName": "[concat(parameters('dnsNameForPublicIP'),'-avset')]",
-    "newStorageAccountName": "[concat(parameters('dnsNameForPublicIP'),'stor')]",
+    "newStorageAccountName": "[concat(tolower(parameters('dnsNameForPublicIP')),'stor')]",
     "bigipNamePrefix": "[concat(parameters('dnsNameForPublicIP'),'-bigip')]",
     "baseUrl": "https://raw.githubusercontent.com/gregcoward/azureO365_single/master/",
     "iappTemplate": "f5.microsoft_office_365_idp.v1.1.0.tmpl",
@@ -395,7 +395,7 @@
             "[concat(variables('baseURL'),'azureo365.sh')]",
             "[concat(variables('baseURL'),'o365start.sh')]"
           ],
-          "commandToExecute": "[concat('bash o365start.sh ','true',';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',';',parameters('adminPassword'),';',parameters('licenseToken'),';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',' 6443 ',variables('entityId'),';',parameters('authFqdn'),';',parameters('authIp'),';',parameters('domainfqdn'),';',parameters('sslCert'),';',parameters('encryptCert'),';',parameters('dnsEndpointFqdn'),';',variables('iappUrl'))]"
+          "commandToExecute": "[concat('bash o365start.sh ','true',';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',';',parameters('adminPassword'),';',parameters('licenseToken'),';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',' 6443 ',variables('entityId'),';',parameters('authFqdn'),';',parameters('authIp'),';',parameters('domainfqdn'),';',parameters('sslCert'),';',parameters('sslCert'),';',parameters('dnsFqdn'),';',variables('iappUrl'))]"
         }
       }
     }
