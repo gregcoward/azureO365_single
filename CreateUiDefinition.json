@@ -172,7 +172,7 @@
       "authFqdn": "[steps('federationSettings').authFqdn]",
       "authIp": "[steps('federationSettings').authIp]",
       "domainFqdn": "[steps('federationSettings').domainFqdn]",
-      "dnsEndpointFqdn": "[steps('federationSettings').dnsFqdn]",
+      "dnsFqdn": "[steps('federationSettings').dnsFqdn]",
       "sslCert": "[steps('federationSettings').sslCert]"
     }
   }
