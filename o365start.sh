@@ -50,33 +50,18 @@ IFS=';' read -ra devicearr <<< "$1"
 IFS=';' read -ra vipportarr <<< "$2"    
 IFS=';' read -ra iapparr <<< "$3"
 
-certfilename= ""
-keyfilename= ""
-chainfilename= ""
-
 ## Construct the blackbox.conf file using the arrays.
-row1='"1":["'${iapparr[1]}'","'${iapparr[2]}'"]'
+row1='"1":["'${iapparr[0]}'","'${iapparr[1]}'","'${iapparr[2]}'","'${iapparr[3]}'","'${iapparr[4]}'","'${iapparr[5]}'","'${vipportarr[0]}'"]'
 
-deployment1='o365_fed":{"traffic-group": "traffic-group-local-only","strict-updates": "disabled","variables": {"apm__login_domain":"'${iapparr[3]}'", "apm__credentials": "no","apm__log_settings": "/Common/default-log-setting","apm__ad_monitor": "ad_icmp","apm__saml_entity_id": "'${iapparr[0]}'","apm__saml_entity_id_format": "URL","general__assistance_options": "full","general__config_mode": "basic","idp_encryption__cert": "/Common/default.crt","idp_encryption__key": "/Common/default.key","webui_virtual__addr": "'${devicearr[2]}'","webui_virtual__cert": "/Common/default.crt","webui_virtual__key": "/Common/default.key","webui_virtual__port": "6443"},"tables": {"apm__active_directory_servers": {"column-names": [ "fqdn", "addr" ],"rows": { '$row1' }}}}'
+deployment1='deployment_'${iapparr[3]}'.'${hostarr[1]}'.cloudapp.azure.com"":{"traffic-group":"none","strict-updates":"disabled","variables":{},"tables":{"configuration__destination":{"column-names":["entityid","authfqdn","authip","fedfqdn","authcert", "encryptcert", "vipport"],"rows":{'$row1'}}}}'
 
-jsonfile='{"loadbalance":{"is_master":"'${devicearr[0]}'","master_hostname":"'${devicearr[5]}'","master_address":"'${devicearr[6]}'","master_password":"'${devicearr[3]}'","device_hostname":"'${devicearr[1]}'","device_address":"'${devicearr[2]}'","device_password":"'${devicearr[3]}'"},"bigip":{"application_name":"F5 O365 Federation","application_fqdn":"'${iapparr[6]}'","ntp_servers":"1.pool.ntp.org 2.pool.ntp.org","ssh_key_inject":"false","change_passwords":"false","license":{"basekey":"'${devicearr[4]}'"},"modules":{"auto_provision":"true","ltm":"nominal","afm":"none","asm":"none","apm":"nominal"},"redundancy":{"provision":"false"},"network":{"provision":"false"},"iappconfig":{"f5.microsoft_office_365_idp.v1.1.0":{"template_location":"'${iapparr[7]}'","deployments":{"'$deployment1'}}}}}'
+jsonfile='{"loadbalance":{"is_master":"'${devicearr[0]}'","master_hostname":"'${devicearr[5]}'","master_address":"'${devicearr[6]}'","master_password":"'${devicearr[3]}'","device_hostname":"'${devicearr[1]}'","device_address":"'${devicearr[2]}'","device_password":"'${devicearr[3]}'"},"bigip":{"application_name":"F5 O365 Federation","application_fqdn":"'${iapparr[6]}'","ntp_servers":"1.pool.ntp.org 2.pool.ntp.org","ssh_key_inject":"false","change_passwords":"false","license":{"basekey":"'${devicearr[4]}'"},"modules":{"auto_provision":"true","ltm":"nominal","afm":"none","asm":"none","apm":"nominal"},"redundancy":{"provision":"false"},"network":{"provision":"false"},"iappconfig":{"f5.o365_fed":{"template_location":"'${iapparr[8]}'","deployments":{"'$deployment1'}}}}}'
 
 echo $jsonfile > /config/blackbox.conf
 
 ## Move the files and run them.
-mv ./azureo365.sh /config/azureo365.sh
-if [ "$certfilename" != "" ]
-then
-	mv ./"$certfilename" /config/ssl/"$certfilename"
-fi
-if [ "$keyfilename" != "" ]
-then
-	mv ./"$keyfilename" /config/ssl/"$keyfilename"
-fi
-if [ "$chainilename" != "" ]
-then
-	mv ./"$chainfilename" /config/ssl/"$chainfilename"
-fi
+mv ./azuresecurity.sh /config/azureo365.sh
+
 chmod +w /config/startup
 echo "/config/azureo365.sh" >> /config/startup
 chmod u+x /config/azureo365.sh
