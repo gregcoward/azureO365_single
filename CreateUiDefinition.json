@@ -3,19 +3,19 @@
   "version": "0.0.1-preview",
   "parameters": {
     "basics": [
+    ],
+    "steps": [
       {
         "name": "dnsNameForPublicIP",
         "type": "Microsoft.Common.TextBox",
         "label": "F5 BIG-IP Name",
-        "defaultValue": "f5bigipo365",
+        "tooltip": "Enter a public facing DNS prefix, i.e. 'f5demobigip1'.  The suffix will depend upon the Azure region; for example: 'f5demobipip1.westus.cloudapp.azure.com'.",
         "constraints": {
           "required": true,
-          "regex": "^[a-z0-9A-Z]{1,15}$",
+          "regex": "^[a-z0-9A-Z]{1,20}$",
           "validationMessage": "Only letters and numbers are allowed, and the value must be 1-10 characters long."
         }
-      }
-    ],
-    "steps": [
+      },
       {
         "name": "bigipSettings",
         "label": "F5 BIG-IP Settings",
@@ -164,7 +164,7 @@
       }
     ],
     "outputs": {
-      "dnsNameForPublicIP": "[basics('dnsNameForPublicIP')]",
+      "dnsNameForPublicIP": "[steps('bigipSettings').dnsNameForPublicIP]",
       "adminUsername": "[steps('bigipSettings').adminUsername]",
       "adminPassword": "[steps('bigipSettings').SSHCredentials.password]",
       "vmSize": "[steps('bigipSettings').vmSize]",
