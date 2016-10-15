@@ -18,7 +18,7 @@
             "name": "dnsNameForPublicIP",
             "type": "Microsoft.Common.TextBox",
             "label": "F5 BIG-IP Name",
-            "tooltip": "Enter a public facing DNS prefix, i.e. 'f5demobigip1'.  The suffix will depend upon the Azure region; for example: 'f5demobipip1.westus.cloudapp.azure.com'.",
+            "tooltip": "test",
             "constraints": {
               "required": true,
               "regex": "^[a-z0-9A-Z]{1,20}$",
