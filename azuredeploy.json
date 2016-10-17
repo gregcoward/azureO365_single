@@ -395,8 +395,10 @@
             "[concat(variables('baseURL'),'azureo365.sh')]",
             "[concat(variables('baseURL'),'o365start.sh')]"
           ],
-          "commandToExecute": "[concat('bash o365start.sh ','true',';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',';',parameters('adminPassword'),';',parameters('licenseToken'),';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',' 6443 ',variables('entityId'),';',parameters('authFqdn'),';',parameters('authIp'),';',parameters('domainfqdn'),';',parameters('sslCert'),';',parameters('sslCert'),';',parameters('dnsFqdn'),';',variables('iappUrl'))]"
-        }
+          "protectedSettings": {
+              "commandToExecute": "[concat('bash o365start.sh ','true',';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',';',parameters('adminPassword'),';',parameters('licenseToken'),';',variables('bigipNamePrefix'),'0',';',variables('ipAddress'),'0',' 6443 ',variables('entityId'),';',parameters('authFqdn'),';',parameters('authIp'),';',parameters('domainfqdn'),';',parameters('sslCert'),';',parameters('sslCert'),';',parameters('dnsFqdn'),';',variables('iappUrl'))]"
+          }        
+          }
       }
     }
   ],
