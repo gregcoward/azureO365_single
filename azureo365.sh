@@ -880,18 +880,16 @@ function main() {
       
       if [[ $master == "true" ]]; then
            set_status "In Progress: Configuring Applications"     
-         #  iapp_configuration           
-         #  set_status "In Progress: Configuring Applications - OK"
-      else 
-        #  log "We are a slave, nothing left to do."
+           iapp_configuration           
+           set_status "In Progress: Configuring Applications - OK"        
+ 	else            
+           log "We are a slave, nothing left to do."
       fi
       
       sleep 10      
       log "iApp Configuratin Complete"
   
-  # create and assign OpenCart Rewrite
-
-      tmsh save sys config | eval $LOGGER_CMD 
+ tmsh save sys config | eval $LOGGER_CMD 
       fi
 
   finish=$(date +%s)
