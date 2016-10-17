@@ -50,6 +50,9 @@ IFS=';' read -ra devicearr <<< "$1"
 IFS=';' read -ra vipportarr <<< "$2"    
 IFS=';' read -ra iapparr <<< "$3"
 
+#certfileURI= "${iapparr[4]}"
+certfileURI= ""
+
 ## Construct the blackbox.conf file using the arrays.
 row1='"1":["'${iapparr[0]}'","'${iapparr[1]}'","'${iapparr[2]}'","'${iapparr[3]}'","'${iapparr[4]}'","'${iapparr[5]}'","'${vipportarr[0]}'"]'
 
@@ -60,7 +63,11 @@ jsonfile='{"loadbalance":{"is_master":"'${devicearr[0]}'","master_hostname":"'${
 echo $jsonfile > /config/blackbox.conf
 
 ## Move the files and run them.
-mv ./azureo365.sh /config/azureo365.sh
+mv ./azuresecurity.sh /config/azureo365.sh
+if [ "$certfilename" != "" ]
+then
+	mv ./"$certfileURI" /config/ssl/"$certfileURI"
+fi
 
 chmod +w /config/startup
 echo "/config/azureo365.sh" >> /config/startup
