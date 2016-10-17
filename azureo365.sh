@@ -23,7 +23,7 @@
 ## 10/31/13#  John Gruber   # Created base functionality                 ##
 ###########################################################################
 ##   1.8.3   #  Ken Bocchino  # Modified to work for Blackbox            ##
-##								         ##
+##								                                         ##
 ###########################################################################
 ##  1.0   # Gregory Coward  # Modified to work for Azure O365 10/9/2016  ##
 ##                                                                       ##
@@ -738,7 +738,7 @@ iapp_configuration() {
                                         service+=" " 
                                         variables=$(get_user_data_iapps_hash {bigip}{iappconfig}{\"$iapp_template\"}{deployments}{\"$deployment\"}{variables})
                                         if [[ -n $variables ]]; then
-						service+=" variables replace-all-with {apm__aaa_profile { value \"/\#create_new\#\" } "
+						service+=" variables replace-all-with {"
 						for variable in ${variables[@]}; do
 							value=$(get_user_data_value {bigip}{iappconfig}{\"$iapp_template\"}{deployments}{\"$deployment\"}{variables}{\"$variable\"})
 							if [[ -n $variable && -n $value && $value != *"ARRAY"* ]]; then
