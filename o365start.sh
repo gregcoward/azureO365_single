@@ -50,10 +50,36 @@ IFS=';' read -ra devicearr <<< "$1"
 IFS=';' read -ra vipportarr <<< "$2"    
 IFS=';' read -ra iapparr <<< "$3"
 
+## Certificate Download setting variables
+OS_USER_DATA_RETRIES=20
+OS_USER_DATA_RETRY_INTERVAL=10
+OS_USER_DATA_RETRY_MAX_TIME=300
+OS_USER_DATA_TMP_FILE="/config/o365SSL_Cert"
+CERT_URL ="'${iapparr[4]}'"
+CERT_PSWD ="'${iapparr[5]}'"
+
+function sslcert_import() {
+	  rm -f $OS_USER_DATA_TMP_FILE
+    log "Retrieving user-iApp-data from $1..."
+	  curl -k -s -f --retry $OS_USER_DATA_RETRIES --retry-delay $OS_USER_DATA_RETRY_INTERVAL --retry-max-time $OS_USER_DATA_RETRY_MAX_TIME $CERT_URL -o $OS_USER_DATA_TMP_FILE $1
+   	  
+   	  if [[ $? == 0 ]]; then
+   	  	tmsh load sys config merge file $OS_USER_DATA_TMP_FILE &> /dev/null
+   	  	sleep 10
+    	  else
+	      log "Could not retrieve certificate-data after $OS_USER_DATA_RETRIES attempts, quitting..."
+	      set_status "Failure: Could not retrieve certificate-data after $OS_USER_DATA_RETRIES attempts"
+	      return 1
+ 	  fi
+}
+
+sslcert_import
+tmsh install sys crypto pkcs12 $OS_USER_DATA_TMP_FILE from-local-file $OS_USER_DATA_TMP_FILE passphrase $CERT_URL
+
 ## Construct the blackbox.conf file using the arrays.
 row1='"1":["'${iapparr[1]}'","'${iapparr[2]}'"]'
 
-deployment1='o365":{"traffic-group": "traffic-group-local-only","strict-updates": "disabled","variables": {"apm__login_domain":"'${iapparr[3]}'", "apm__credentials": "no","apm__log_settings": "/Common/default-log-setting","apm__ad_monitor": "ad_icmp","apm__saml_entity_id": "'${iapparr[0]}'","apm__saml_entity_id_format": "URL","general__assistance_options": "full","general__config_mode": "basic","idp_encryption__cert": "/Common/default.crt","idp_encryption__key": "/Common/default.key","webui_virtual__addr": "'${devicearr[2]}'","webui_virtual__cert": "/Common/default.crt","webui_virtual__key": "/Common/default.key","webui_virtual__port": "6443"},"tables": {"apm__active_directory_servers": {"column-names": [ "fqdn", "addr" ],"rows": { '$row1' }}}}'
+deployment1='o365":{"traffic-group": "traffic-group-local-only","strict-updates": "disabled","variables": {"apm__login_domain":"'${iapparr[3]}'", "apm__credentials": "no","apm__log_settings": "/Common/default-log-setting","apm__ad_monitor": "ad_icmp","apm__saml_entity_id": "'${iapparr[0]}'","apm__saml_entity_id_format": "URL","general__assistance_options": "full","general__config_mode": "basic","idp_encryption__cert": "/Common/o365SSL_Cert.crt","idp_encryption__key": "/Common/o365SSL_Cert.key","webui_virtual__addr": "'${devicearr[2]}'","webui_virtual__cert": "/Common/default.crt","webui_virtual__key": "/Common/default.key","webui_virtual__port": "6443"},"tables": {"apm__active_directory_servers": {"column-names": [ "fqdn", "addr" ],"rows": { '$row1' }}}}'
 
 jsonfile='{"loadbalance":{"is_master":"'${devicearr[0]}'","master_hostname":"'${devicearr[5]}'","master_address":"'${devicearr[6]}'","master_password":"'${devicearr[3]}'","device_hostname":"'${devicearr[1]}'","device_address":"'${devicearr[2]}'","device_password":"'${devicearr[3]}'"},"bigip":{"application_name":"F5 O365 Federation","application_fqdn":"'${iapparr[6]}'","ntp_servers":"1.pool.ntp.org 2.pool.ntp.org","ssh_key_inject":"false","change_passwords":"false","license":{"basekey":"'${devicearr[4]}'"},"modules":{"auto_provision":"true","ltm":"nominal","afm":"none","asm":"none","apm":"nominal"},"redundancy":{"provision":"false"},"network":{"provision":"false"},"iappconfig":{"f5.microsoft_office_365_idp.v1.1.0":{"template_location":"'${iapparr[7]}'","deployments":{"'$deployment1'}}}}}'
 
