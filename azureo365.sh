@@ -864,7 +864,7 @@ function main() {
         fi  
         set_status "In Progress: Provisioning - OK" 
         execute_system_cmd
-
+        
       wait_mcp_running
       # wait for stuff to restart
       sleep 10
@@ -878,14 +878,11 @@ function main() {
       cmi_configuration      
       set_status "In Progress: CMI - OK"
       
-      if [[ $master == "true" ]]; then
-           set_status "In Progress: Configuring Applications"     
-           iapp_configuration           
-           set_status "In Progress: Configuring Applications - OK"
-      else 
-        #  log "We are a slave, nothing left to do."
-      fi
+      set_status "In Progress: Configuring Applications"     
+      # wait for stuff to restart
+      iapp_configuration
       
+      set_status "In Progress: Configuring Applications - OK"
       sleep 10      
       log "iApp Configuratin Complete"
   
@@ -901,7 +898,7 @@ function main() {
   # remove startup script
   currentscript=$0
   set_status "Shredding ${currentscript}" 
-  shred -u -z ${currentscript}
+  #shred -u -z ${currentscript}
   
   set_status "OK"
   exit
