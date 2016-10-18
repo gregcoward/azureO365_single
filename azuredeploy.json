@@ -16,7 +16,7 @@
       }
     },
     "adminPassword": {
-      "type": "securestring",
+      "type": "string",
       "metadata": {
         "description": "The BIG-IP administrator password."
       }
@@ -29,7 +29,7 @@
       }
     },
     "licenseToken": {
-      "type": "securestring",
+      "type": "string",
       "metadata": {
         "description": "The License Token for the first BYOL F5 Web Application Firewall."
       }
