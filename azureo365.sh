@@ -738,7 +738,7 @@ iapp_configuration() {
                                         service+=" " 
                                         variables=$(get_user_data_iapps_hash {bigip}{iappconfig}{\"$iapp_template\"}{deployments}{\"$deployment\"}{variables})
                                         if [[ -n $variables ]]; then
-						service+=" variables replace-all-with {"
+						service+=" variables replace-all-with { apm__aaa_profile { value \"/\#create_new\#\"}"
 						for variable in ${variables[@]}; do
 							value=$(get_user_data_value {bigip}{iappconfig}{\"$iapp_template\"}{deployments}{\"$deployment\"}{variables}{\"$variable\"})
 							if [[ -n $variable && -n $value && $value != *"ARRAY"* ]]; then
