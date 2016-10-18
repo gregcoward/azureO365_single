@@ -41,7 +41,7 @@
 ## iapparr=2 #AD domain IP Address
 ## iapparr=3 #Federated Domain FQDN  (ex: f5demo.net )
 ## iapparr=4 #Auth SSL Cert .pfx format (should match applcation_fqdn)
-## iapparr=5 #encrypt Cert .pfx format
+## iapparr=5 #Auth Cert Password
 ## iapparr=6 #application FQDN (ex: access.f5demo.net )
 ## iapparr=7 #iapp source URL
 
