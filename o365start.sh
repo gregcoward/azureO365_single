@@ -50,32 +50,6 @@ IFS=';' read -ra devicearr <<< "$1"
 IFS=';' read -ra vipportarr <<< "$2"    
 IFS=';' read -ra iapparr <<< "$3"
 
-## Certificate Download setting variables
-OS_USER_DATA_RETRIES=20
-OS_USER_DATA_RETRY_INTERVAL=10
-OS_USER_DATA_RETRY_MAX_TIME=300
-OS_USER_DATA_TMP_FILE="/config/o365SSL_Cert"
-CERT_URL ="'${iapparr[4]}'"
-CERT_PSWD ="'${iapparr[5]}'"
-
-function sslcert_import() {
-	  rm -f $OS_USER_DATA_TMP_FILE
-    log "Retrieving user-iApp-data from $1..."
-	  curl -k -s -f --retry $OS_USER_DATA_RETRIES --retry-delay $OS_USER_DATA_RETRY_INTERVAL --retry-max-time $OS_USER_DATA_RETRY_MAX_TIME $CERT_URL -o $OS_USER_DATA_TMP_FILE $1
-   	  
-   	  if [[ $? == 0 ]]; then
-   	  	tmsh load sys config merge file $OS_USER_DATA_TMP_FILE &> /dev/null
-   	  	sleep 10
-    	  else
-	      log "Could not retrieve certificate-data after $OS_USER_DATA_RETRIES attempts, quitting..."
-	      set_status "Failure: Could not retrieve certificate-data after $OS_USER_DATA_RETRIES attempts"
-	      return 1
- 	  fi
-}
-
-sslcert_import
-tmsh install sys crypto pkcs12 $OS_USER_DATA_TMP_FILE from-local-file $OS_USER_DATA_TMP_FILE passphrase $CERT_URL
-
 ## Construct the blackbox.conf file using the arrays.
 row1='"1":["'${iapparr[1]}'","'${iapparr[2]}'"]'
 
