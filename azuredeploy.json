@@ -57,6 +57,12 @@
       "metadata": {
         "description": "The SSL certificate .pfx file corresponding to public facing VIP."
       }
+    },
+     "sslPswd": {
+      "type": "string",
+      "metadata": {
+        "description": "The SSL certificate .pfx file password."
+      }
     }
   },
   "variables": {
@@ -395,7 +401,7 @@
             "[concat(variables('baseURL'),'azureo365.sh')]",
             "[concat(variables('baseURL'),'o365start.sh')]"
           ],
-          "commandToExecute": "[concat('bash o365start.sh ','true',';',variables('bigipNamePrefix'),copyindex(),';',variables('ipAddress'),copyindex(),';',parameters('adminPassword'),';',parameters('licenseToken'),';',variables('bigipNamePrefix'),copyindex(),';',variables('ipAddress'),copyindex(),' 6443 ',variables('entityId'),';',parameters('authFqdn'),';',parameters('authIp'),';',parameters('domainfqdn'),';',parameters('sslCert'),';',parameters('sslCert'),';',parameters('dnsFqdn'),';',variables('iappUrl'))]"
+          "commandToExecute": "[concat('bash o365start.sh ','true',';',variables('bigipNamePrefix'),copyindex(),';',variables('ipAddress'),copyindex(),';',parameters('adminPassword'),';',parameters('licenseToken'),';',variables('bigipNamePrefix'),copyindex(),';',variables('ipAddress'),copyindex(),' 6443 ',variables('entityId'),';',parameters('authFqdn'),';',parameters('authIp'),';',parameters('domainfqdn'),';',parameters('sslCert'),';',parameters('sslPswd'),';',parameters('dnsFqdn'),';',variables('iappUrl'))]"
           }
       }
     }
