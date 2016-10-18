@@ -60,7 +60,7 @@ jsonfile='{"loadbalance":{"is_master":"'${devicearr[0]}'","master_hostname":"'${
 echo $jsonfile > /config/blackbox.conf
 
 ## Move the files and run them.
-mv ./azuresecurity.sh /config/azureo365.sh
+mv ./azureo365.sh /config/azureo365.sh
 
 chmod +w /config/startup
 echo "/config/azureo365.sh" >> /config/startup
